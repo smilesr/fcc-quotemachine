@@ -1,0 +1,157 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    </script>
+
+     <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css'>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js">
+    </script>
+    <style>
+      body {
+        height: 100%;
+        display: flex;
+        background-color: blue;
+      }
+      html {
+        height:100%;
+        font-size: 62.5%; 
+      }
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px white solid;
+        min-width: 100%;
+      }
+      .square {
+        display:flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+        width: 400px;
+        border-radius: 5px;        
+        background: white;
+      }
+      #blockquote {
+        margin: 1.5rem 1rem;
+        padding: 1rem 1.5rem;
+        quotes: "\201C""\201D""\2018""\2019";
+        color: blue;
+        font-size: 2rem;
+      }
+      #blockquote cite {
+        font-size: 1.4rem;
+        display: block;
+        margin-top: 0.5rem;
+        float: right;
+      }
+      button:focus {
+        outline: none;
+      }
+      .mediabox {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: no-wrap;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 2rem;         
+      }
+      .mediabox > button {
+        height: 0%;
+      }
+      a > i {
+        color: blue;
+      }
+      button {
+        background-color: blue;
+        color: white;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div class="container">
+      <div class="square">
+        <div id="blockquote">
+          <i id="quote-content" class="fa fa-quote-left"> </i>  
+          <footer>
+            <cite id="quote-title">  </cite>
+          </footer>
+        </div>
+
+        <div class="mediabox">
+          <a class="button" id="tweet-quote" title="Tweet this quote!" target="_blank" href="">
+            <i class="fa fa-twitter-square fa-twitter fa-2x"></i>
+          </a>
+
+          <button>Next quote</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')</script>
+    <script src="https://platform.twitter.com/widgets.js"></script>
+
+    <script>
+      $(function() {
+        function getNewQuote(){
+          $.ajax( {
+            url: 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+            success: function(data) {
+              var post = data.shift(); 
+              $('#quote-title').text(post.title);
+              var twitText = (post.content).replace(/<(?:.|\n)*?>/gm, '');
+              $('#quote-content').html(twitText);
+              twitText = twitText.replace(/&#8217;/gm, "'");
+              twitText = twitText.replace(/&#8230;/gm, "...");
+              $("a").attr("href", "https://www.twitter.com/intent/tweet?hashtags=quotes&amp;related=freecodecamp&amp;text=" + '"' + twitText + '"' + post.title);
+            },
+            cache: false
+          });
+        };
+        getNewQuote();
+        function getNewColor(){
+          var i=0;
+          var newCol = '';
+          var getRandom = [];
+          function randomNumber(){
+            return Math.floor((Math.random() * 255));
+          };
+          for (i; i<3; i++){
+            getRandom.push(randomNumber()); 
+          };
+          newCol = "rgb( " + getRandom[0] + ", " + getRandom[1] + ", " + getRandom[2] + ")"
+          return newCol;
+        };
+
+        $("button").click(function(){
+          var newColor = getNewColor();
+          $("#tweet-container").empty();
+          $("body").css("background-color", newColor);
+          $("#blockquote").css("color", newColor);
+          $("#blockquote::before").css("color", newColor);
+          $("#quote-title").css("color", newColor);
+          $("button").css("background-color", newColor);
+          $("a > i").css("color", newColor);
+          var newQuote = getNewQuote();
+        });
+      });
+    </script>
+  </body>
+</html>
